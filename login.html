@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Register - Tanishka Smart Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;600&family=Pangolin&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #0F172A; /* Dark slate for professional look */
+            width: 100%;
+            overflow: hidden;
+        }
+
+        /* Orbiting Rings Background */
+        .rings {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: -1;
+        }
+
+        .rings i {
+            position: absolute;
+            inset: 0;
+            border: 2px solid transparent;
+            border-radius: 45% 55% 55% 45% / 45% 55% 45% 55%;
+            transition: all 0.5s ease;
+        }
+
+        .rings i:nth-child(1) {
+            border-color: #F59E0B;
+            animation: orbit 7s linear infinite;
+        }
+
+        .rings i:nth-child(2) {
+            border-color: #1E40AF;
+            animation: orbit 5s linear infinite reverse;
+        }
+
+        .rings i:nth-child(3) {
+            border-color: #FFF5BA;
+            animation: orbit 9s linear infinite;
+        }
+
+        .rings:hover i {
+            border-width: 4px;
+            filter: drop-shadow(0 0 15px var(--clr));
+        }
+
+        @keyframes orbit {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.15); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        /* Form Container */
+        .form-container {
+            position: relative;
+            width: 90%;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            font-size: 1.5rem;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Pangolin', cursive;
+        }
+
+        .tab-active {
+            border-bottom: 3px solid #F59E0B;
+            color: #F59E0B;
+            font-weight: 600;
+            text-shadow: 0 0 5px rgba(245, 158, 11, 0.5);
+        }
+
+        .tab-inactive {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .tab-inactive:hover {
+            color: #FFF5BA;
+        }
+
+        /* Form Inputs */
+        .inputBx {
+            position: relative;
+            width: 100%;
+        }
+
+        .inputBx input {
+            width: 100%;
+            padding: 0.8rem 1.2rem;
+            background: transparent;
+            border: 2px solid #FFF5BA;
+            border-radius: 40px;
+            font-size: 1.1rem;
+            color: #fff;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .inputBx input:focus {
+            border-color: #F59E0B;
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
+        }
+
+        .inputBx input::placeholder {
+            color: rgba(255, 245, 186, 0.75);
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .inputBx input[type="submit"] {
+            background: linear-gradient(45deg, #F59E0B, #D97706);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Pangolin', cursive;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .inputBx input[type="submit"]::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .inputBx input[type="submit"]:hover::before {
+            left: 100%;
+        }
+
+        .inputBx input[type="submit"]:hover {
+            background: linear-gradient(45deg, #D97706, #B45309);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
+        }
+
+        .inputBx input[type="submit"]:active {
+            transform: scale(0.95);
+        }
+
+        /* Password Toggle */
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 1rem;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #FFF5BA;
+            transition: all 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: #F59E0B;
+            transform: translateY(-50%) scale(1.2);
+        }
+
+        /* Error Messages */
+        .error {
+            border: 2px solid #DC2626;
+        }
+
+        .error-message {
+            color: #DC2626;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            text-align: center;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        /* Links */
+        .links {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0 1rem;
+        }
+
+        .links a {
+            color: #FFF5BA;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-family: 'Quicksand', sans-serif;
+            transition: color 0.3s ease;
+        }
+
+        .links a:hover {
+            color: #F59E0B;
+            text-shadow: 0 0 5px rgba(245, 158, 11, 0.5);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .form-container {
+                width: 95%;
+                padding: 1.5rem;
+            }
+
+            .tab {
+                font-size: 1.2rem;
+                padding: 0.8rem;
+            }
+
+            .inputBx input {
+                padding: 0.6rem 1rem;
+                font-size: 1rem;
+            }
+
+            .rings i {
+                transform: scale(0.7);
+            }
+        }
+
+        @media (max-width: 400px) {
+            .form-container {
+                padding: 1rem;
+            }
+
+            .tab {
+                font-size: 1rem;
+            }
+
+            .inputBx input[type="submit"] {
+                padding: 0.6rem;
+            }
+
+            .links a {
+                font-size: 0.8rem;
+            }
+
+            .rings i {
+                transform: scale(0.6);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Orbiting Rings Background -->
+    <div class="rings">
+        <i style="--clr:#F59E0B;"></i>
+        <i style="--clr:#1E40AF;"></i>
+        <i style="--clr:#FFF5BA;"></i>
+    </div>
+
+    <!-- Form Container -->
+    <div class="form-container">
+        <!-- Tabs -->
+        <div class="tabs">
+            <div id="loginTab" class="tab tab-active">Login</div>
+            <div id="registerTab" class="tab tab-inactive">Register</div>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="space-y-4">
+            <div class="inputBx">
+                <input type="email" id="loginEmail" name="loginEmail" placeholder="Email" required>
+                <p id="loginEmailError" class="error-message hidden"></p>
+            </div>
+            <div class="inputBx relative">
+                <input type="password" id="loginPassword" name="loginPassword" placeholder="Password" required>
+                <button type="button" id="loginPasswordToggle" class="password-toggle">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0zm6.4 0c-1.6 2.5-4.5 4-9.4 4s-7.8-1.5-9.4-4c1.6-2.5 4.5-4 9.4-4s7.8 1.5 9.4 4z"/>
+                    </svg>
+                </button>
+                <p id="loginPasswordError" class="error-message hidden"></p>
+            </div>
+            <div class="inputBx">
+                <input type="submit" value="Login">
+            </div>
+            <div class="links">
+                <a href="#">Forgot Password?</a>
+                <a href="#" id="toRegister">Signup</a>
+            </div>
+        </form>
+
+        <!-- Register Form -->
+        <form id="registerForm" class="space-y-4 hidden">
+            <div class="inputBx">
+                <input type="text" id="name" name="name" placeholder="Name" required>
+                <p id="nameError" class="error-message hidden"></p>
+            </div>
+            <div class="inputBx">
+                <input type="email" id="registerEmail" name="registerEmail" placeholder="Email" required>
+                <p id="registerEmailError" class="error-message hidden"></p>
+            </div>
+            <div class="inputBx relative">
+                <input type="password" id="registerPassword" name="registerPassword" placeholder="Password" required>
+                <button type="button" id="registerPasswordToggle" class="password-toggle">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0zm6.4 0c-1.6 2.5-4.5 4-9.4 4s-7.8-1.5-9.4-4c1.6-2.5 4.5-4 9.4-4s7.8 1.5 9.4 4z"/>
+                    </svg>
+                </button>
+                <p id="registerPasswordError" class="error-message hidden"></p>
+            </div>
+            <div class="inputBx">
+                <input type="submit" value="Register">
+            </div>
+            <div class="links">
+                <a href="#" id="toLogin">Back to Login</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Tab switching
+        const loginTab = document.getElementById('loginTab');
+        const registerTab = document.getElementById('registerTab');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const toRegister = document.getElementById('toRegister');
+        const toLogin = document.getElementById('toLogin');
+
+        function switchToLogin() {
+            loginTab.classList.remove('tab-inactive');
+            loginTab.classList.add('tab-active');
+            registerTab.classList.remove('tab-active');
+            registerTab.classList.add('tab-inactive');
+            loginForm.classList.remove('hidden');
+            registerForm.classList.add('hidden');
+        }
+
+        function switchToRegister() {
+            registerTab.classList.remove('tab-inactive');
+            registerTab.classList.add('tab-active');
+            loginTab.classList.remove('tab-active');
+            loginTab.classList.add('tab-inactive');
+            registerForm.classList.remove('hidden');
+            loginForm.classList.add('hidden');
+        }
+
+        loginTab.addEventListener('click', switchToLogin);
+        registerTab.addEventListener('click', switchToRegister);
+        toRegister.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchToRegister();
+        });
+        toLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchToLogin();
+        });
+
+        // Password toggle
+        const loginPasswordToggle = document.getElementById('loginPasswordToggle');
+        const registerPasswordToggle = document.getElementById('registerPasswordToggle');
+        const loginPassword = document.getElementById('loginPassword');
+        const registerPassword = document.getElementById('registerPassword');
+
+        loginPasswordToggle.addEventListener('click', () => {
+            const type = loginPassword.type === 'password' ? 'text' : 'password';
+            loginPassword.type = type;
+            loginPasswordToggle.innerHTML = type === 'password' ?
+                '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0zm6.4 0c-1.6 2.5-4.5 4-9.4 4s-7.8-1.5-9.4-4c1.6-2.5 4.5-4 9.4-4s7.8 1.5 9.4 4z"/></svg>' :
+                '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18M9.4 9.4a3 3 0 003.2 3.2M15 12a3 3 0 01-3 3c-4.9 0-7.8-1.5-9.4-4 1.6-2.5 4.5-4 9.4-4a3 3 0 013 3z"/></svg>';
+        });
+
+        registerPasswordToggle.addEventListener('click', () => {
+            const type = registerPassword.type === 'password' ? 'text' : 'password';
+            registerPassword.type = type;
+            registerPasswordToggle.innerHTML = type === 'password' ?
+                '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0zm6.4 0c-1.6 2.5-4.5 4-9.4 4s-7.8-1.5-9.4-4c1.6-2.5 4.5-4 9.4-4s7.8 1.5 9.4 4z"/></svg>' :
+                '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18M9.4 9.4a3 3 0 003.2 3.2M15 12a3 3 0 01-3 3c-4.9 0-7.8-1.5-9.4-4 1.6-2.5 4.5-4 9.4-4a3 3 0 013 3z"/></svg>';
+        });
+
+        // Validation functions
+        function showError(input, errorElement, message) {
+            input.classList.add('error');
+            errorElement.classList.remove('hidden');
+            errorElement.textContent = message;
+        }
+
+        function clearError(input, errorElement) {
+            input.classList.remove('error');
+            errorElement.classList.add('hidden');
+            errorElement.textContent = '';
+        }
+
+        // Login form validation
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail');
+            const password = document.getElementById('loginPassword');
+            let isValid = true;
+
+            clearError(email, document.getElementById('loginEmailError'));
+            clearError(password, document.getElementById('loginPasswordError'));
+
+            if (!email.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+                showError(email, document.getElementById('loginEmailError'), 'Please enter a valid email address');
+                isValid = false;
+            }
+
+            if (password.value.length < 6) {
+                showError(password, document.getElementById('loginPasswordError'), 'Password must be at least 6 characters');
+                isValid = false;
+            }
+
+            if (isValid) {
+                alert('Login successful!'); // Replace with actual login logic
+                loginForm.reset();
+            }
+        });
+
+        // Register form validation
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name');
+            const email = document.getElementById('registerEmail');
+            const password = document.getElementById('registerPassword');
+            let isValid = true;
+
+            clearError(name, document.getElementById('nameError'));
+            clearError(email, document.getElementById('registerEmailError'));
+            clearError(password, document.getElementById('registerPasswordError'));
+
+            if (name.value.trim().length < 2) {
+                showError(name, document.getElementById('nameError'), 'Name must be at least 2 characters');
+                isValid = false;
+            }
+
+            if (!email.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+                showError(email, document.getElementById('registerEmailError'), 'Please enter a valid email address');
+                isValid = false;
+            }
+
+            if (password.value.length < 6) {
+                showError(password, document.getElementById('registerPasswordError'), 'Password must be at least 6 characters');
+                isValid = false;
+            }
+
+            if (isValid) {
+                alert('Registration successful!'); // Replace with actual registration logic
+                registerForm.reset();
+            }
+        });
+    </script>
+</body>
+</html>

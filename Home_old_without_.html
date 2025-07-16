@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrintMaster Solutions - Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .nav-button, .cta-button, .service-card { transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out; }
+        .nav-button:hover, .cta-button:hover, .service-card:hover { transform: scale(1.05); }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .header { position: sticky; top: 0; z-index: 10; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="header bg-white shadow-md p-4 fade-in">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between">
+            <div class="flex items-center mb-4 sm:mb-0">
+                <!-- <svg class="h-8 w-8 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2z"/></svg>-->
+                <img src="WhatsApp Unknown 2025-07-13 at 23.18.36/clear_logo.svg" alt="Icon" width="100" height="100">
+
+                <h1 class="text-2xl font-bold text-blue-700">Tanishka Smart Store</h1>
+            </div>
+            <nav class="flex gap-3">
+                <a href="login.html" class="nav-button flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm text-white font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    Login
+                </a>
+                <a href="book.html" class="nav-button flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm text-white font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2z"/></svg>
+                    Book
+                </a>
+                <a href="admin.html" class="nav-button flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm text-white font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>
+                    Admin
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Section -->
+    <section class="max-w-6xl mx-auto py-8 text-center fade-in">
+        <h2 class="text-3xl font-bold text-blue-700 mb-4">Welcome to Tanishka Smart Store </h2>
+        <p class="text-lg text-gray-600 mb-8">Fast, affordable, and high-quality print services delivered to your doorstep!</p>
+        <a href="book.html" class="cta-button inline-flex items-center gap-2 rounded-lg bg-green-600 px-6 py-3 text-white font-semibold hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2z"/></svg>
+            Book Now
+        </a>
+    </section>
+
+    <!-- Services Section -->
+    <section class="max-w-6xl mx-auto py-8 fade-in">
+        <h2 class="text-2xl font-bold text-blue-700 text-center mb-6">Our Print Services</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Service 1 -->
+            <div class="service-card rounded-lg bg-white p-6 shadow-md border-t-4 border-blue-200">
+                <div class="flex items-center mb-2">
+                    <svg class="h-6 w-6 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2z"/></svg>
+                    <h3 class="text-lg font-semibold text-blue-600">Black & White Printing</h3>
+                </div>
+                <p class="text-sm text-gray-600">Affordable monochrome prints for documents and reports.</p>
+            </div>
+            <!-- Service 2 -->
+            <div class="service-card rounded-lg bg-white p-6 shadow-md border-t-4 border-blue-200">
+                <div class="flex items-center mb-2">
+                    <svg class="h-6 w-6 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    <h3 class="text-lg font-semibold text-blue-600">Double-sided Printing</h3>
+                </div>
+                <p class="text-sm text-gray-600">Eco-friendly prints with content on both sides.</p>
+            </div>
+            <!-- Service 3 -->
+            <div class="service-card rounded-lg bg-white p-6 shadow-md border-t-4 border-blue-200">
+                <div class="flex items-center mb-2">
+                    <svg class="h-6 w-6 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v3a2 2 0 01-2 2h-2a2 2 0 01-2-2V4zm-7 7a2 2 0 012-2h2a2 2 0 012 2v3a2 2 0 01-2 2H6a2 2 0 01-2-2v-3zm14 0a2 2 0 00-2 2v3a2 2 0 002 2h2a2 2 0 002-2v-3a2 2 0 00-2-2h-2z"/></svg>
+                    <h3 class="text-lg font-semibold text-blue-600">Color Printing</h3>
+                </div>
+                <p class="text-sm text-gray-600">Vibrant, high-quality color prints for presentations.</p>
+            </div>
+            <!-- Service 4 -->
+            <div class="service-card rounded-lg bg-white p-6 shadow-md border-t-4 border-blue-200">
+                <div class="flex items-center mb-2">
+                    <svg class="h-6 w-6 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <h3 class="text-lg font-semibold text-blue-600">Spiral Binding</h3>
+                </div>
+                <p class="text-sm text-gray-600">Durable binding for notebooks and projects.</p>
+            </div>
+            <!-- Service 5 -->
+            <div class="service-card rounded-lg bg-white p-6 shadow-md border-t-4 border-blue-200">
+                <div class="flex items-center mb-2">
+                    <svg class="h-6 w-6 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v18m-9-9h18"/></svg>
+                    <h3 class="text-lg font-semibold text-blue-600">Lamination</h3>
+                </div>
+                <p class="text-sm text-gray-600">Protect your documents with glossy lamination.</p>
+            </div>
+            <!-- Service 6 -->
+            <div class="service-card rounded-lg bg-white p-6 shadow-md border-t-4 border-blue-200">
+                <div class="flex items-center mb-2">
+                    <svg class="h-6 w-6 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    <h3 class="text-lg font-semibold text-blue-600">Photo Printing</h3>
+                </div>
+                <p class="text-sm text-gray-600">Stunning photo prints for memories and events.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="max-w-6xl mx-auto py-6 text-center text-sm text-gray-500 fade-in">
+        © 2025 PrintMaster Solutions. All rights reserved.
+    </footer>
+</body>
+</html>

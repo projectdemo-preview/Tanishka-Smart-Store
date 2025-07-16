@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Service Print Booking - Tanishka Smart Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600&family=Pangolin&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;a
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #FFFFFF, #F3F4F6);
+        }
+
+        h1, h2, h3 {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .page-title {
+            font-family: 'Pangolin', cursive;
+            color: #1b65ee;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.6), 0 0 10px rgba(255, 255, 255, 0.4);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 5px rgba(255, 255, 255, 0.6), 0 0 10px rgba(255, 255, 255, 0.4); }
+            to { text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 15px rgba(255, 255, 255, 0.6); }
+        }
+
+        /* Error styling */
+        .error {
+            border: 2px solid #EF4444;
+            animation: shake 0.3s ease-in-out;
+        }
+        .error-message {
+            color: #EF4444;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            opacity: 0;
+            animation: fadeInError 0.3s ease-out forwards;
+        }
+
+        /* Animations */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @keyframes fadeInError {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInSlide {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .service-card {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .service-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+            animation: #4e32ee fadeInSlide 0.5s ease-out;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            background: linear-gradient(180deg, #FFFFFF, #F3E8FF);
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #4e32ee, #5469f0);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #3c5cd1, #424fdb);
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(50, 81, 207, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.95);
+        }
+
+        .btn-loading::after {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Icon styling */
+        .service-icon {
+            background: linear-gradient(45deg, #fbb94f);
+            border-radius: 50%;
+            padding: 8px;
+            color: white;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .service-card:hover .service-icon {
+            transform: scale(1.1);
+        }
+
+        /* Header shadow */
+        .header {
+            transition: box-shadow 0.3s ease-in-out;
+        }
+        .header.scrolled {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .service-card {
+                padding: 1rem;
+            }
+            .container {
+                padding: 1rem;
+            }
+            .btn-primary {
+                padding: 0.75rem;
+                font-size: 0.875rem;
+            }
+            .page-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+    <!-- Header -->
+    <header class="header sticky top-0 bg-white z-20">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="page-title text-2xl font-bold flex items-center">
+                <svg class="h-6 w-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2z"/>
+                </svg>
+                Book Print Services
+            </h1>
+            <a href="index.html" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+                <svg class="h-5 w-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Back to Home
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 container max-w-7xl mx-auto px-4 py-8">
+        <div class="md:hidden sticky top-14 bg-white py-2 z-10 text-center text-sm font-medium text-gray-600">Swipe to view all services</div>
+
+        <!-- Grid of Services -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Service 1 -->
+            <div class="rounded-xl bg-white p-6 shadow-md service-card border-t-4 border-blue-200">
+                <div class="mb-4 flex items-center text-lg font-semibold text-blue-600">
+                    <div class="service-icon">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <span class="ml-3">Black & White Printing</span>
+                </div>
+                <label class="mb-1 block text-sm font-medium text-gray-700">Upload PDF</label>
+                <input type="file" name="bwFile" class="mb-3 w-full rounded-lg border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-blue-500" accept=".pdf" required>
+                <p class="error-message hidden" id="bwFileError"></p>
+                <label class="mb-1 block text-sm font-medium text-gray-700">Total Pages</label>
+                <input type="number" name="bwPages" class="mb-3 w-full rounded-lg border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-blue-500" placeholder="e.g. 5" min="1" required>
+                <p class="error-message hidden" id="bwPagesError"></p>
+                <label class="mb-1 block text-sm font-medium text-gray-700">Number of Copies</label>
+                <input type="number" name="bwCopies" class="mb-3 w-full rounded-lg border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-blue-500" placeholder="e.g. 2" min="1" required>
+                <p class="error-message hidden" id="bwCopiesError"></p>
+                <div class="text-right text-sm font-semibold text-green-600">Estimated: ₹<span class="bwEstimate">0.00</span></div>
+            </div>
+
+            <!-- Service 2 -->
+            <div class="rounded-xl bg-white p-6 shadow-md service-card border-t-4 border-blue-200">
+                <div class="mb-4 flex items-center text-lg font-semibold text-blue-600">
+                    <div class="service-icon">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                    </div>
+                    <span class="ml-3">Double-sided Printing</span>
+                </div>
+                <label class="mb-1 block text-sm font-medium text-gray-700">Upload PDF</label>
+                <input type="file" name="dsFile" class="mb-3 w-full rounded-lg border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-blue-500" accept=".pdf" required>
+                <p class="error-message hidden" id="dsFileError"></p>
+                <label class="mb-1 block text-sm font-medium text-gray-700">Total Pages</label>
+                <input type="number" name="dsPages" class="mb-3 w-full rounded-lg border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-blue-500" placeholder="e.g. 5" min="1" required>
+                <p class="error-message hidden" id="dsPagesError"></p>
+                <label class="mb-1 block text-sm font-medium text-gray-700">Number of Copies</label>
+                <input type="number" name="dsCopies" class="mb-3 w-full rounded-lg border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-blue-500" placeholder="e.g. 2" min="1" required>
+                <p class="error-message hidden" id="dsCopiesError"></p>
+                <div class="text-right text-sm font-semibold text-green-600">Estimated: ₹<span class="dsEstimate">0.00</span></div>
+            </div>
+
+            <!-- Service 3 -->
+            <div class="rounded-xl bg-white p-6 shadow-md service-card border-t-4 border-blue-200">
+                <div class="mb-4 flex items-center text-lg font-semibold text-blue-600">
+                    <div class="service-icon">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v3a2 2 0 01-2 2h-2a2 2 0 01-2-2V4zm-7 7a2 2 0 012-2h2a2 2 0 012 2v3a2 2 0 01-2 2H6a2 2 0 01-2-2v-3zm14 0a2 2 0 00-2 2v3a2 2 0 002 2h2a2 2 0 002-2v-3a2 2 0 00-2-2h-2z"/>
+                        </svg>
+                    </div>
+                    <span class="ml-3">Color Printing</span>
+                </div>
+                <label class="mb-1 block text-sm font-medium text-gray-700">Upload PDF</label>
+                <input type="file" name="colorFile" class="mb-3 w-full rounded-lg border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-blue-500" accept=".pdf" required>
+                <p class="error-message hidden" id="colorFileError"></p>
+                <label class="mb-1 block text-sm font-medium text-gray-700">Total Pages</label>
+                <input type="number" name="colorPages" class="mb-3 w-full rounded-lg border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-blue-500" placeholder="e.g. 5" min="1" required>
+                <p class="error-message hidden" id="colorPagesError"></p>
+                <label class="mb-1 block text-sm font-medium text-gray-700">Number of Copies</label>
+                <input type="number" name="colorCopies" class="mb-3 w-full rounded-lg border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-blue-500" placeholder="e.g. 2" min="1" required>
+                <p class="error-message hidden" id="colorCopiesError"></p>
+                <div class="text-right text-sm font-semibold text-green-600">Estimated: ₹<span class="colorEstimate">0.00</span></div>
+            </div>
+
+            <!-- Service 4 -->
+            <div class="rounded-xl bg-white p-6 shadow-md service-card border-t-4 border-blue-200">
+                <div class="mb-4 flex items-center text-lg font-semibold text-blue-600">
+                    <div class="service-icon">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <span class="ml-3">Spiral Binding</span>
+                </div>
+                <label class="mb-1 block text-sm font-medium text-gray-700">Upload PDF</label>
+                <input type="file" name="spiralFile" class="mb-3 w-full rounded-lg border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-blue-500" accept=".pdf" required>
+                <p class="error-message hidden" id="spiralFileError"></p>
+                <label class="mb-1 block text-sm font-medium text-gray-700">Total Pages</label>
+                <input type="number" name="spiralPages" class="mb-3 w-full rounded-lg border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-blue-500" placeholder="e.g. 5" min="1" required>
+                <p class="error-message hidden" id="spiralPagesError"></p>
+                <label class="mb-1 block text-sm font-medium text-gray-700">Number of Copies</label>
+                <input type="number" name="spiralCopies" class="mb-3 w-full rounded-lg border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-blue-500" placeholder="e.g. 2" min="1" required>
+                <p class="error-message hidden" id="spiralCopiesError"></p>
+                <div class="text-right text-sm font-semibold text-green-600">Estimated: ₹<span class="spiralEstimate">0.00</span></div>
+            </div>
+
+            <!-- Service 5 -->
+            <div class="rounded-xl bg-white p-6 shadow-md service-card border-t-4 border-blue-200">
+                <div class="mb-4 flex items-center text-lg font-semibold text-blue-600">
+                    <div class="service-icon">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v18m-9-9h18"/>
+                        </svg>
+                    </div>
+                    <span class="ml-3">Lamination</span>
+                </div>
+                <label class="mb-1 block text-sm font-medium text-gray-700">Upload PDF</label>
+                <input type="file" name="laminationFile" class="mb-3 w-full rounded-lg border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-blue-500" accept=".pdf" required>
+                <p class="error-message hidden" id="laminationFileError"></p>
+                <label class="mb-1 block text-sm font-medium text-gray-700">Total Pages</label>
+                <input type="number" name="laminationPages" class="mb-3 w-full rounded-lg border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-blue-500" placeholder="e.g. 5" min="1" required>
+                <p class="error-message hidden" id="laminationPagesError"></p>
+                <label class="mb-1 block text-sm font-medium text-gray-700">Number of Copies</label>
+                <input type="number" name="laminationCopies" class="mb-3 w-full rounded-lg border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-blue-500" placeholder="e.g. 2" min="1" required>
+                <p class="error-message hidden" id="laminationCopiesError"></p>
+                <div class="text-right text-sm font-semibold text-green-600">Estimated: ₹<span class="laminationEstimate">0.00</span></div>
+            </div>
+
+            <!-- Service 6 -->
+            <div class="rounded-xl bg-white p-6 shadow-md service-card border-t-4 border-blue-200">
+                <div class="mb-4 flex items-center text-lg font-semibold text-blue-600">
+                    <div class="service-icon">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <span class="ml-3">Photo Printing</span>
+                </div>
+                <label class="mb-1 block text-sm font-medium text-gray-700">Upload PDF</label>
+                <input type="file" name="photoFile" class="mb-3 w-full rounded-lg border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-blue-500" accept=".pdf" required>
+                <p class="error-message hidden" id="photoFileError"></p>
+                <label class="mb-1 block text-sm font-medium text-gray-700">No. of Pages</label>
+                <input type="number" name="photoPages" class="mb-3 w-full rounded-lg border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-blue-500" placeholder="e.g. 20" min="1" required>
+                <p class="error-message hidden" id="photoPagesError"></p>
+                <label class="mb-1 block text-sm font-medium text-gray-700">Quantity</label>
+                <input type="number" name="photoQuantity" class="mb-3 w-full rounded-lg border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-blue-500" placeholder="e.g. 1" min="1" required>
+                <p class="error-message hidden" id="photoQuantityError"></p>
+                <div class="text-right text-sm font-semibold text-green-600">Estimated: ₹<span class="photoEstimate">0.00</span></div>
+            </div>
+        </div>
+
+        <!-- Total, Slot, and Submit -->
+        <div class="sticky bottom-0 mt-8 space-y-4 rounded-xl bg-white p-6 shadow-md border-t-4 border-blue-200">
+            <div class="flex justify-between items-center">
+                <span class="text-lg font-semibold text-gray-800">Total Amount</span>
+                <span class="text-xl font-bold text-green-600">₹<span id="totalAmount">0.00</span></span>
+            </div>
+            <div>
+                <label for="slot" class="mb-1 block text-sm font-medium text-gray-700">Select Pickup Slot</label>
+                <select id="slot" class="w-full rounded-lg border border-gray-300 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <option value="" disabled selected>Choose a time slot</option>
+                    <option>9:00 AM – 11:00 AM</option>
+                    <option>11:00 AM – 1:00 PM</option>
+                    <option>2:00 PM – 4:00 PM</option>
+                    <option>4:00 PM – 6:00 PM</option>
+                </select>
+                <p class="error-message hidden" id="slotError"></p>
+            </div>
+            <button type="button" id="placeOrder" class="w-full rounded-lg btn-primary py-3 font-semibold text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 flex items-center justify-center">
+                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Place Order
+            </button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white py-4 text-center text-sm text-gray-500">
+        <p>© 2025 Tanishka Smart Store. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Dynamic Pricing and Validation
+        const services = [
+            { name: 'bw', pricePerPage: 0.5, estimateElement: document.querySelector('.bwEstimate') },
+            { name: 'ds', pricePerPage: 0.8, estimateElement: document.querySelector('.dsEstimate') },
+            { name: 'color', pricePerPage: 1.0, estimateElement: document.querySelector('.colorEstimate') },
+            { name: 'spiral', pricePerPage: 2.0, estimateElement: document.querySelector('.spiralEstimate') },
+            { name: 'lamination', pricePerPage: 1.5, estimateElement: document.querySelector('.laminationEstimate') },
+            { name: 'photo', pricePerPage: 3.0, estimateElement: document.querySelector('.photoEstimate') }
+        ];
+
+        function updateEstimates() {
+            let total = 0;
+            services.forEach(service => {
+                const pages = document.querySelector(`[name="${service.name}Pages"]`).value || 0;
+                const copies = document.querySelector(`[name="${service.name}Copies"]`)?.value || document.querySelector(`[name="${service.name}Quantity"]`)?.value || 0;
+                const cost = pages * copies * service.pricePerPage;
+                service.estimateElement.textContent = cost.toFixed(2);
+                total += cost;
+            });
+            document.getElementById('totalAmount').textContent = total.toFixed(2);
+        }
+
+        function showError(input, errorElement, message) {
+            input.classList.add('error');
+            errorElement.classList.remove('hidden');
+            errorElement.textContent = message;
+        }
+
+        function clearError(input, errorElement) {
+            input.classList.remove('error');
+            errorElement.classList.add('hidden');
+            errorElement.textContent = '';
+        }
+
+        services.forEach(service => {
+            const pagesInput = document.querySelector(`[name="${service.name}Pages"]`);
+            const copiesInput = document.querySelector(`[name="${service.name}Copies"]`) || document.querySelector(`[name="${service.name}Quantity"]`);
+            pagesInput.addEventListener('input', updateEstimates);
+            copiesInput.addEventListener('input', updateEstimates);
+        });
+
+        document.getElementById('placeOrder').addEventListener('click', (e) => {
+            e.preventDefault();
+            let isValid = true;
+            const placeOrderBtn = document.getElementById('placeOrder');
+
+            placeOrderBtn.disabled = true;
+            placeOrderBtn.classList.add('btn-loading');
+            placeOrderBtn.textContent = 'Processing...';
+
+            services.forEach(service => {
+                const fileInput = document.querySelector(`[name="${service.name}File"]`);
+                const pagesInput = document.querySelector(`[name="${service.name}Pages"]`);
+                const copiesInput = document.querySelector(`[name="${service.name}Copies"]`) || document.querySelector(`[name="${service.name}Quantity"]`);
+                const fileError = document.getElementById(`${service.name}FileError`);
+                const pagesError = document.getElementById(`${service.name}PagesError`);
+                const copiesError = document.getElementById(`${service.name}CopiesError`) || document.getElementById(`${service.name}QuantityError`);
+
+                clearError(fileInput, fileError);
+                clearError(pagesInput, pagesError);
+                clearError(copiesInput, copiesError);
+
+                if (fileInput.files.length > 0 && !fileInput.files[0].type.includes('pdf')) {
+                    showError(fileInput, fileError, 'Please upload a valid PDF file');
+                    isValid = false;
+                }
+
+                if (fileInput.files.length > 0 && (pagesInput.value <= 0 || !pagesInput.value)) {
+                    showError(pagesInput, pagesError, 'Pages must be a positive number');
+                    isValid = false;
+                }
+
+                if (fileInput.files.length > 0 && (copiesInput.value <= 0 || !copiesInput.value)) {
+                    showError(copiesInput, copiesError, 'Copies must be a positive number');
+                    isValid = false;
+                }
+            });
+
+            const slot = document.getElementById('slot');
+            const slotError = document.getElementById('slotError');
+            clearError(slot, slotError);
+            if (!slot.value) {
+                showError(slot, slotError, 'Please select a pickup slot');
+                isValid = false;
+            }
+
+            setTimeout(() => {
+                placeOrderBtn.disabled = false;
+                placeOrderBtn.classList.remove('btn-loading');
+                placeOrderBtn.textContent = 'Place Order';
+                placeOrderBtn.insertAdjacentHTML('afterbegin', '<svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>');
+
+                if (isValid && services.some(service => document.querySelector(`[name="${service.name}File"]`).files.length > 0)) {
+                    alert('Order placed successfully!');
+                    document.querySelectorAll('input[type="file"], input[type="number"], select').forEach(input => input.value = '');
+                    updateEstimates();
+                } else if (!services.some(service => document.querySelector(`[name="${service.name}File"]`).files.length > 0)) {
+                    alert('Please upload at least one PDF file to place an order.');
+                }
+            }, 1000);
+        });
+
+        // Sequential reveal of service cards
+        document.addEventListener('DOMContentLoaded', () => {
+            const serviceCards = document.querySelectorAll('.service-card');
+            const servicesSection = document.querySelector('.grid');
+
+            const revealCards = () => {
+                serviceCards.forEach((card, index) => {
+                    setTimeout(() => {
+                        card.classList.add('visible');
+                    }, index * 500); // 0.5-second delay between each card
+                });
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    revealCards();
+                    observer.disconnect();
+                }
+            }, { threshold: 0.2 });
+
+            observer.observe(servicesSection);
+
+            // Header shadow on scroll
+            window.addEventListener('scroll', () => {
+                const header = document.querySelector('.header');
+                if (window.scrollY > 0) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
